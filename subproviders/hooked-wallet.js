@@ -77,6 +77,8 @@ function HookedWalletSubprovider(opts){
   if (opts.publishTransaction) self.publishTransaction = opts.publishTransaction
   // calls
   if (opts.ethCall) self.ethCall = opts.ethCall
+  // EIP3085 
+  if (opts.walletAddEthereumChain) self.walletAddEthereumChain = opts.walletAddEthereumChain
 }
 
 HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
@@ -113,6 +115,14 @@ HookedWalletSubprovider.prototype.handleRequest = function(payload, next, end){
       txParams.chainType = "ETH"
       waterfall([
         (cb) => self.ethCall(txParams, cb),
+      ], end)
+      return
+
+    case 'wallet_addEthereumChain':
+      txParams = payload.params[0]
+      txParams.chainType = "ETH"
+      waterfall([
+        (cb) => self.walletAddEthereumChain(txParams, cb),
       ], end)
       return
 
